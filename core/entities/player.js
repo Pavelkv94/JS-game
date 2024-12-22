@@ -1,4 +1,4 @@
-import { Position } from "./position";
+import { Position } from "./position.js";
 
 export class Player {
   #playerPoints = 0;
@@ -12,18 +12,6 @@ export class Player {
     this.#gridSettings = gridSettings;
   }
 
-  get playerPoints() {
-    return this.#playerPoints;
-  }
-
-  get position() {
-    return this.#position;
-  }
-
-  set position(value) {
-    this.#position = value;
-  }
-
   increasePlayerPoints() {
     this.#playerPoints++;
   }
@@ -34,7 +22,7 @@ export class Player {
       this.#numberUtility.getRandomIntegerNumber(0, this.#gridSettings.rowsCount)
     );
 
-    if (index === 0) {
+    if (playersPositions.length === 0) {
       this.#position = playerPosition;
     } else {
       const isUniquePosition = !playersPositions.find((coords) => coords.equals(playerPosition));
@@ -45,5 +33,17 @@ export class Player {
         this.move(index, playersPositions);
       }
     }
+  }
+
+  get playerPoints() {
+    return this.#playerPoints;
+  }
+
+  get position() {
+    return this.#position;
+  }
+
+  set position(value) {
+    this.#position = value;
   }
 }

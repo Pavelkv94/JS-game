@@ -1,4 +1,4 @@
-import { Position } from "./position";
+import { Position } from "./position.js";
 
 export class Google {
   #position;
@@ -12,6 +12,27 @@ export class Google {
     this.#gridSettings = gridSettings;
   }
 
+  increasePoints() {
+    this.#points++;
+  }
+
+  // google jump
+  jump(busyPositions) {
+    const newGooglePosition = new Position(
+      this.#numberUtility.getRandomIntegerNumber(0, this.#gridSettings.columnsCount),
+      this.#numberUtility.getRandomIntegerNumber(0, this.#gridSettings.rowsCount)
+    );
+    const isPositionWithPlayers = !!busyPositions.find((coords) => coords.equals(newGooglePosition));
+    const isOldPosition = newGooglePosition.equals(this.#position);
+
+    if (isPositionWithPlayers && isOldPosition) {
+      this.jump(busyPositions);
+      return;
+    }
+
+    this.#position = newGooglePosition;
+  }
+
   get position() {
     return this.#position;
   }
@@ -22,26 +43,5 @@ export class Google {
 
   get points() {
     return this.#points;
-  }
-
-  increasePoints() {
-    this.#points++;
-  }
-
-  // google jump
-  jump(playersPositions) {
-    const newGooglePosition = new Position(
-      this.#numberUtility.getRandomIntegerNumber(0, this.#gridSettings.columnsCount),
-      this.#numberUtility.getRandomIntegerNumber(0, this.#gridSettings.rowsCount)
-    );
-    const isPositionWithPlayers = !!playersPositions.find((coords) => coords.equals(newGooglePosition));
-    const isOldPosition = newGooglePosition.equals(this.#position);
-
-    if (isPositionWithPlayers && isOldPosition) {
-      this.jump(playersPositions);
-      return;
-    }
-
-    this.#position = newGooglePosition;
   }
 }
