@@ -1,6 +1,8 @@
-import { Google } from "./entities/google.js";
-import { Player } from "./entities/player.js";
+import { Google } from "./entities//units/google.js";
+import { Player } from "./entities//units/player.js";
+import { Position } from "./entities/position.js";
 import { GameStatuses } from "./settings/game-statuses.js";
+import { MOVE_DIRECTIONS } from "./settings/move-directions.js";
 import { Settings } from "./settings/settings.js";
 
 export class Game {
@@ -25,7 +27,7 @@ export class Game {
     }
 
     #notify() {
-      //добавить к jump и move player
+        //добавить к jump и move player
         this.#observers.forEach((o) => o());
     }
 
@@ -71,8 +73,54 @@ export class Game {
 
         this.#players.forEach((player, index) => {
             const positions = this.#players.map((p) => p.position);
-            player.move(index, positions);
+            player.placePlayerToGrid(index, positions);
         });
+    }
+
+    async movePlayer(playerNumber, moveDirection) {
+        const position = this.#players[playerNumber - 1].position;
+        let newPosition;
+        switch (moveDirection) {
+            case MOVE_DIRECTIONS.UP: {
+                newPosition = new Position(position.x, position.y - 1);
+                break;
+            }
+            case MOVE_DIRECTIONS.DOWN: {
+                newPosition = new Position(position.x, position.y + 1);
+                break;
+            }
+            case MOVE_DIRECTIONS.LEFT: {
+                newPosition = new Position(position.x - 1, position.y);
+                break;
+            }
+            case MOVE_DIRECTIONS.RIGHT: {
+                newPosition = new Position(position.x + 1, position.y);
+                break;
+            }
+        }
+
+        if (
+            newPosition.x >= this.#settings.gridSettings.columnsCount ||
+            newPosition.x < 0 ||
+            newPosition.y >= this.#settings.gridSettings.rowsCount ||
+            newPosition.y < 0
+        ) {
+            return;
+        }
+
+        if (this.#players.some((el) => el.position.equals(newPosition))) {
+            return; // Position is already occupied
+        }
+
+        this.#players[playerNumber - 1].position = newPosition;
+
+        if (this.#players[playerNumber - 1].position.equals(this.#google.position)) {
+            this.#players[playerNumber - 1].increasePoints();
+            const positions = this.#players.map((p) => p.position);
+
+            this.#google.jump(positions);
+            this.#notify();
+        }
     }
 
     get google() {
@@ -81,10 +129,6 @@ export class Game {
 
     get settings() {
         return this.#settings;
-    }
-
-    get playersPositions() {
-        return this.#players;
     }
 
     get players() {

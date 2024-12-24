@@ -1,10 +1,9 @@
 import { GridSettings } from "./grid-settings.js";
 
 export class Settings {
-    #pointsToWin = 5;
-    //todo move to game
+    #pointsToWin = 50;
     #gridSettings;
-    #googleJumpInterval = 1000;
+    #googleJumpInterval = 3000;
     #playersCount = 2;
 
     constructor() {
@@ -21,6 +20,10 @@ export class Settings {
 
     get playersCount() {
         return this.#playersCount;
+    }
+
+    set playersCount(value) {
+        this.#playersCount = value;
     }
 
     get pointsToWin() {
