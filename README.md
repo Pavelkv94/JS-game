@@ -13,6 +13,3 @@ Create classes:
 class Settings {
 - constructore() {
 -   this.GridSettings = new GridSettings();
-- ...
-- }
-- }
